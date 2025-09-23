@@ -6,7 +6,7 @@
 import Foundation
 
 struct Question: Identifiable, Codable {
-    let id = UUID()
+    var id = UUID()
     let text: String
     let answers: [Answer]
     

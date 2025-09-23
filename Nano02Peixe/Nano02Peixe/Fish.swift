@@ -6,7 +6,7 @@
 import Foundation
 
 struct Fish: Identifiable, Codable {
-    let id = UUID()
+    var id = UUID()
     let name: String
     let description: String
     let imageName: String
