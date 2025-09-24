@@ -9,7 +9,6 @@ struct QuizStartView: View {
             VStack(spacing: 30) {
                 Spacer()
                 
-                // Título Principal
                 VStack(spacing: 10) {
                     Text("🐟")
                         .font(.system(size: 80))
@@ -20,14 +19,12 @@ struct QuizStartView: View {
                         .multilineTextAlignment(.center)
                 }
                 
-                // Descrição
                 Text(quizViewModel.quizDescription)
                     .font(.title3)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
                     .foregroundColor(.secondary)
                 
-                // Info adicional
                 VStack(spacing: 8) {
                     Text("🎯 \(quizViewModel.questions.count) perguntas divertidas")
                     Text("🐠 16 personalidades diferentes")
@@ -38,7 +35,6 @@ struct QuizStartView: View {
                 
                 Spacer()
                 
-                // Botão Começar
                 Button {
                     showQuiz = true
                 } label: {
