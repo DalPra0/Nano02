@@ -49,7 +49,6 @@ class QuestionsDataLoader {
     }
 }
 
-// Manter compatibilidade com código antigo
 struct QuestionsData {
     static var questions: [Question] {
         return QuestionsDataLoader.shared.questions

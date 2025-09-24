@@ -1,10 +1,3 @@
-//
-//  FaceDetectionView.swift
-//  FishQuiz
-//
-//  View que processa detecção facial usando Vision Framework
-//
-
 import SwiftUI
 import Vision
 

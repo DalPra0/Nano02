@@ -7,7 +7,6 @@ struct QuestionView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Progress bar
             QuizProgressView(
                 progress: quizViewModel.progress,
                 currentQuestion: quizViewModel.currentQuestionIndex + 1,
@@ -17,7 +16,6 @@ struct QuestionView: View {
             
             ScrollView {
                 VStack(spacing: 30) {
-                    // Pergunta
                     if let currentQuestion = quizViewModel.currentQuestion {
                         VStack(spacing: 20) {
                             Text("Pergunta \(quizViewModel.currentQuestionIndex + 1)")
@@ -32,7 +30,6 @@ struct QuestionView: View {
                         }
                         .padding(.top, 40)
                         
-                        // Respostas
                         VStack(spacing: 12) {
                             ForEach(currentQuestion.answers) { answer in
                                 AnswerButton(
@@ -46,15 +43,12 @@ struct QuestionView: View {
                         }
                         .padding(.horizontal)
                         
-                        // Botão próxima
                         if selectedAnswerId != nil {
                             Button {
                                 if quizViewModel.currentQuestionIndex == quizViewModel.questions.count - 1 {
-                                    // Última pergunta - mostrar resultado
                                     quizViewModel.nextQuestion()
                                     showResult = true
                                 } else {
-                                    // Próxima pergunta
                                     quizViewModel.nextQuestion()
                                     selectedAnswerId = nil
                                 }
@@ -93,7 +87,6 @@ struct QuestionView: View {
             QuizResultView(quizViewModel: quizViewModel)
         }
         .onChange(of: quizViewModel.currentQuestionIndex) { _, _ in
-            // Reset seleção quando muda pergunta
             selectedAnswerId = nil
         }
         .preferredColorScheme(.dark)

@@ -1,10 +1,3 @@
-//
-//  ImageProcessingService.swift
-//  FishQuiz
-//
-//  Serviço responsável pelo processamento e sobreposição de imagens
-//
-
 import Foundation
 import UIKit
 import CoreGraphics

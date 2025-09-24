@@ -5,5 +5,5 @@ struct Answer: Codable, Identifiable {
     let text: String
     let fishScores: [String: Int]
     
-    var answerId: String { id } // Para compatibilidade com o protocolo Identifiable
+    var answerId: String { id }
 }

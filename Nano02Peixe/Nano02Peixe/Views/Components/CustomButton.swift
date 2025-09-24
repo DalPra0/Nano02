@@ -1,10 +1,3 @@
-//
-//  CustomButton.swift
-//  FishQuiz
-//
-//  Componente de botão customizado reutilizável
-//
-
 import SwiftUI
 
 struct CustomButton: View {

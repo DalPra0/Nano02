@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 class QuizViewModel: ObservableObject {
     @Published var currentQuestionIndex = 0
@@ -60,7 +61,6 @@ class QuizViewModel: ObservableObject {
     private func completeQuiz() {
         isLoading = true
         
-        // Calcular pontuações para cada peixe
         var fishScores: [String: Int] = [:]
         
         for (questionIndex, answerId) in selectedAnswers.enumerated() {
@@ -74,7 +74,6 @@ class QuizViewModel: ObservableObject {
             }
         }
         
-        // Encontrar o peixe com maior pontuação
         let winnerFish = fishScores.max(by: { $0.value < $1.value })
         
         guard let winner = winnerFish,

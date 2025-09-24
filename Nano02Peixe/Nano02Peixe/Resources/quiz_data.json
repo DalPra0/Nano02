@@ -82,7 +82,7 @@
               "Piranha": 4,
               "Peixe jacaré": 3,
               "Peixe-víbora de Sloane": 3,
-              "Peix-pescador": 2
+              "Peixe-pescador": 2
             }
           },
           {
@@ -173,7 +173,7 @@
             "fishScores": {
               "Piranha": 4,
               "Peixe lua": 3,
-              "Pixixe dragão": 3,
+              "Peixe dragão": 3,
               "Peixe jacaré": 2
             }
           },
@@ -290,7 +290,7 @@
             "text": "Finjo que estou ouvindo enquanto planejo dominar a empresa",
             "fishScores": {
               "Peixe jacaré": 4,
-              "Peix-espátula-chinês": 3,
+              "Peixe-espátula-chinês": 3,
               "Piranha": 3,
               "Peixe dragão": 2
             }
@@ -338,7 +338,7 @@
               "Peixe-espátula-chinês": 4,
               "Peixe-víbora de Sloane": 3,
               "Peixe bolha": 3,
-              "Peix-mão liso": 2
+              "Peixe-mão liso": 2
             }
           },
           {
@@ -347,7 +347,7 @@
             "fishScores": {
               "Peixe jacaré": 4,
               "Pirarucu": 3,
-              "Peix lua": 3,
+              "Peixe lua": 3,
               "Piranha": 3
             }
           },
@@ -355,7 +355,7 @@
             "id": "C",
             "text": "Guarda-costas de celebridades ou babá de crianças",
             "fishScores": {
-              "Peix palhaço": 4,
+              "Peixe palhaço": 4,
               "Pacu": 3,
               "Peixe-pescador": 2,
               "Bagre": 2
@@ -368,7 +368,7 @@
               "Tilápia": 4,
               "Bagre": 3,
               "Esturjão": 2,
-              "Peix pedra": 2
+              "Peixe pedra": 2
             }
           }
         ]
@@ -392,8 +392,8 @@
             "text": "Espero horas pelo prato perfeito chegar até mim",
             "fishScores": {
               "Peixe-pescador": 4,
-              "Peix-víbora de Sloane": 3,
-              "Peix pedra": 3,
+              "Peixe-víbora de Sloane": 3,
+              "Peixe pedra": 3,
               "Esturjão": 2
             }
           },
@@ -402,9 +402,9 @@
             "text": "Ataco tudo em grupos organizados",
             "fishScores": {
               "Piranha": 4,
-              "Peix palhaço": 3,
+              "Peixe palhaço": 3,
               "Pacu": 2,
-              "Peix jacaré": 2
+              "Peixe jacaré": 2
             }
           },
           {
@@ -413,8 +413,8 @@
             "fishScores": {
               "Tilápia": 4,
               "Bagre": 3,
-              "Peix-mão liso": 2,
-              "Peix bolha": 2
+              "Peixe-mão liso": 2,
+              "Peixe bolha": 2
             }
           }
         ]
@@ -430,27 +430,27 @@
               "Peixe lua": 4,
               "Pirarucu": 4,
               "Esturjão": 3,
-              "Peix dragão": 3
+              "Peixe dragão": 3
             }
           },
           {
             "id": "B", 
             "text": "\"Espero que não descobram onde eu me escondo\"",
             "fishScores": {
-              "Peix-mão liso": 4,
-              "Peix pedra": 3,
-              "Peix bolha": 3,
-              "Peix-víbora de Sloane": 2
+              "Peixe-mão liso": 4,
+              "Peixe pedra": 3,
+              "Peixe bolha": 3,
+              "Peixe-víbora de Sloane": 2
             }
           },
           {
             "id": "C",
             "text": "\"Vou usar isso para conquistar mais territórios\"",
             "fishScores": {
-              "Peix jacaré": 4,
-              "Peix-espátula-chinês": 3,
+              "Peixe jacaré": 4,
+              "Peixe-espátula-chinês": 3,
               "Piranha": 3,
-              "Peix dragão": 2
+              "Peixe dragão": 2
             }
           },
           {
@@ -460,7 +460,7 @@
               "Tilápia": 4,
               "Bagre": 3,
               "Pacu": 3,
-              "Peix palhaço": 2
+              "Peixe palhaço": 2
             }
           }
         ]
@@ -473,9 +473,9 @@
             "id": "A",
             "text": "\"Estou em processo de metamorfose, volto ano que vem\"",
             "fishScores": {
-              "Peix bolha": 4,
-              "Peix-espátula-chinês": 3,
-              "Peix-mão liso": 3,
+              "Peixe bolha": 4,
+              "Peixe-espátula-chinês": 3,
+              "Peixe-mão liso": 3,
               "Esturjão": 2
             }
           },
@@ -483,9 +483,9 @@
             "id": "B",
             "text": "\"Preciso proteger meu território de invasores\"",
             "fishScores": {
-              "Peix pedra": 4,
-              "Peix-víbora de Sloane": 3,
-              "Peix-pescador": 3,
+              "Peixe pedra": 4,
+              "Peixe-víbora de Sloane": 3,
+              "Peixe-pescador": 3,
               "Piranha": 2
             }
           },
@@ -493,9 +493,9 @@
             "id": "C",
             "text": "\"Estou ocupado conquistando o mundo desde casa\"",
             "fishScores": {
-              "Peix jacaré": 4,
-              "Peix-espátula-chinês": 3,
-              "Peix dragão": 2,
+              "Peixe jacaré": 4,
+              "Peixe-espátula-chinês": 3,
+              "Peixe dragão": 2,
               "Pirarucu": 2
             }
           },
@@ -506,7 +506,7 @@
               "Tilápia": 4,
               "Bagre": 4,
               "Pacu": 2,
-              "Peix bolha": 2
+              "Peixe bolha": 2
             }
           }
         ]
@@ -519,9 +519,9 @@
             "id": "A",
             "text": "Desmorono completamente quando saio da minha zona de conforto",
             "fishScores": {
-              "Peix-mão liso": 4,
-              "Peix pedra": 3,
-              "Peix bolha": 3,
+              "Peixe-mão liso": 4,
+              "Peixe pedra": 3,
+              "Peixe bolha": 3,
               "Esturjão": 2
             }
           },
@@ -529,9 +529,9 @@
             "id": "B",
             "text": "Sou mal compreendido e as pessoas me julgam pela aparência",
             "fishScores": {
-              "Peix-víbora de Sloane": 4,
-              "Peix bolha": 3,
-              "Peix-espátula-chinês": 3,
+              "Peixe-víbora de Sloane": 4,
+              "Peixe bolha": 3,
+              "Peixe-espátula-chinês": 3,
               "Piranha": 2
             }
           },
@@ -539,10 +539,10 @@
             "id": "C",
             "text": "Minha ambição descontrolada de dominar tudo",
             "fishScores": {
-              "Peix jacaré": 4,
-              "Peix lua": 3,
+              "Peixe jacaré": 4,
+              "Peixe lua": 3,
               "Pirarucu": 3,
-              "Peix dragão": 3
+              "Peixe dragão": 3
             }
           },
           {
@@ -552,7 +552,7 @@
               "Tilápia": 4,
               "Bagre": 4,
               "Pacu": 2,
-              "Peix palhaço": 1
+              "Peixe palhaço": 1
             }
           }
         ]
@@ -560,33 +560,33 @@
     ]
   },
   "fish_personalities": {
-    "Peix-mão liso": {
-      "name": "Peix-mão liso",
+    "Peixe-mão liso": {
+      "name": "Peixe-mão liso",
       "title": "O Introvertido Profundo",
       "description": "Você é aquela pessoa que prefere ficar na sua, observando o mundo de longe. Tem uma personalidade única e interessante, mas só quem realmente te conhece sabe disso. Você é especialista em se camuflar em situações sociais e tem uma conexão especial com seu ambiente familiar.",
       "traits": ["Reservado", "Observador", "Único", "Territorial", "Misterioso"],
       "funFact": "Assim como o peixe-mão liso, você tem características únicas que poucos conseguem reconhecer de imediato!"
     },
-    "Peix-espátula-chinês": {
-      "name": "Peix-espátula-chinês", 
+    "Peixe-espátula-chinês": {
+      "name": "Peixe-espátula-chinês", 
       "title": "O Conquistador Estratégico",
       "description": "Você tem uma ambição natural e uma capacidade impressionante de se adaptar e dominar novos territórios. É daquelas pessoas que consegue se estabelecer em qualquer lugar e eventualmente assumir o controle da situação, sempre de forma inteligente e calculada.",
       "traits": ["Adaptável", "Ambicioso", "Estratégico", "Dominante", "Inteligente"],
-      "funFact": "Como o peix-espátula-chinês, você tem o poder de conquistar novos ambientes com maestria!"
+      "funFact": "Como o peixe-espátula-chinês, você tem o poder de conquistar novos ambientes com maestria!"
     },
-    "Peix jacaré": {
-      "name": "Peix jacaré",
+    "Peixe jacaré": {
+      "name": "Peixe jacaré",
       "title": "O Predador Nato",
       "description": "Você é intenso, focado e tem uma presença marcante. Quando quer alguma coisa, vai atrás com determinação total. As pessoas respeitam sua força, mas também sabem que você pode ser um ótimo aliado se estiverem do seu lado.",
       "traits": ["Intenso", "Determinado", "Forte", "Focado", "Respeitado"],
-      "funFact": "Igual ao peix jacaré, você tem uma mordida poderosa na vida - quando foca em algo, consegue!"
+      "funFact": "Igual ao peixe jacaré, você tem uma mordida poderosa na vida - quando foca em algo, consegue!"
     },
-    "Peix dragão": {
-      "name": "Peix dragão",
+    "Peixe dragão": {
+      "name": "Peixe dragão",
       "title": "O Majestoso Misterioso", 
       "description": "Você tem uma presença majestosa e um ar misterioso que intriga as pessoas. É elegante e tem uma personalidade marcante, mas também mantém uma aura de mistério que faz com que os outros sempre queiram saber mais sobre você.",
       "traits": ["Majestoso", "Misterioso", "Elegante", "Intrigante", "Marcante"],
-      "funFact": "Como o peix dragão, você tem uma elegância natural que chama atenção por onde passa!"
+      "funFact": "Como o peixe dragão, você tem uma elegância natural que chama atenção por onde passa!"
     },
     "Esturjão": {
       "name": "Esturjão",
@@ -595,19 +595,19 @@
       "traits": ["Sábio", "Experiente", "Respeitável", "Estável", "Conselheiro"],
       "funFact": "Assim como o esturjão que pode viver mais de 100 anos, você tem uma sabedoria que vem com a experiência!"
     },
-    "Peix palhaço": {
-      "name": "Peix palhaço",
+    "Peixe palhaço": {
+      "name": "Peixe palhaço",
       "title": "O Sociável Protetor",
       "description": "Você é a pessoa que todo mundo quer ter por perto! É divertido, leal e tem um talento natural para cuidar dos amigos. Mesmo sendo sociável, você é seletivo com quem realmente deixa entrar no seu círculo íntimo.",
       "traits": ["Sociável", "Leal", "Divertido", "Protetor", "Carismático"],
-      "funFact": "Como o peix palhaço, você tem uma relação especial com seu 'grupo' e é super leal aos amigos!"
+      "funFact": "Como o peixe palhaço, você tem uma relação especial com seu 'grupo' e é super leal aos amigos!"
     },
-    "Peix lua": {
-      "name": "Peix lua",
+    "Peixe lua": {
+      "name": "Peixe lua",
       "title": "O Gigante Gentil",
       "description": "Você é aquela pessoa impressionante que chama atenção por onde passa, mas é surpreendentemente gentil e tranquila. Tem uma presença marcante e uma personalidade única que fascina as pessoas ao seu redor.",
       "traits": ["Impressionante", "Gentil", "Único", "Tranquilo", "Fascinante"],
-      "funFact": "Igual ao peix lua que é o maior peix ósseo do mundo, você tem uma personalidade que se destaca!"
+      "funFact": "Igual ao peixe lua que é o maior peixe ósseo do mundo, você tem uma personalidade que se destaca!"
     },
     "Piranha": {
       "name": "Piranha", 
@@ -616,26 +616,26 @@
       "traits": ["Intenso", "Grupal", "Leal", "Corajoso", "Direto"],
       "funFact": "Como as piranhas, você é muito mais forte quando está com seu 'cardume' de amigos!"
     },
-    "Peix pedra": {
-      "name": "Peix pedra",
+    "Peixe pedra": {
+      "name": "Peixe pedra",
       "title": "O Mestre da Paciência",
       "description": "Você é o rei ou rainha da paciência e da observação. Prefere ficar na sua até o momento perfeito para agir. É super cuidadoso com suas decisões e tem uma habilidade impressionante de se camuflar em diferentes situações.",
       "traits": ["Paciente", "Observador", "Cauteloso", "Estratégico", "Camuflado"],
-      "funFact": "Assim como o peix pedra que é mestre da camuflagem, você sabe quando é hora de aparecer e quando é hora de ficar na sua!"
+      "funFact": "Assim como o peixe pedra que é mestre da camuflagem, você sabe quando é hora de aparecer e quando é hora de ficar na sua!"
     },
-    "Peix-víbora de Sloane": {
-      "name": "Peix-víbora de Sloane",
+    "Peixe-víbora de Sloane": {
+      "name": "Peixe-víbora de Sloane",
       "title": "O Misterioso das Profundezas",
       "description": "Você é intensamente misterioso e tem uma personalidade complexa que poucos conseguem decifrar. Vive nas suas próprias 'profundezas' emocionais e tem uma visão única do mundo que às vezes assusta, às vezes fascina.",
       "traits": ["Misterioso", "Complexo", "Profundo", "Único", "Intenso"],
-      "funFact": "Como o peix-víbora que vive nas profundezas do oceano, você tem camadas de personalidade que poucos conseguem explorar!"
+      "funFact": "Como o peixe-víbora que vive nas profundezas do oceano, você tem camadas de personalidade que poucos conseguem explorar!"
     },
-    "Peix-pescador": {
-      "name": "Peix-pescador",
+    "Peixe-pescador": {
+      "name": "Peixe-pescador",
       "title": "O Estrategista Paciente",
       "description": "Você é daquelas pessoas que sabe exatamente quando e como conseguir o que quer. É paciente, estratégico e tem uma habilidade natural de atrair as oportunidades certas para você. Não se desespera - sempre tem um plano.",
       "traits": ["Estratégico", "Paciente", "Atraente", "Planejador", "Esperto"],
-      "funFact": "Igual ao peix-pescador com sua 'luzinha', você sabe como atrair exatamente o que precisa!"
+      "funFact": "Igual ao peixe-pescador com sua 'luzinha', você sabe como atrair exatamente o que precisa!"
     },
     "Pirarucu": {
       "name": "Pirarucu",
@@ -644,12 +644,12 @@
       "traits": ["Imponente", "Orgulhoso", "Forte", "Resistente", "Adaptável"],
       "funFact": "Como o pirarucu, você é uma força da natureza brasileira com uma personalidade gigante!"
     },
-    "Peix bolha": {
-      "name": "Peix bolha",
+    "Peixe bolha": {
+      "name": "Peixe bolha",
       "title": "O Incompreendido Autêntico",
       "description": "Você é autêntico até o último fio de cabelo e não liga para o que os outros pensam da sua aparência ou jeito de ser. Pode parecer meio 'derretido' por fora, mas por dentro tem uma personalidade incrível e um coração gigante.",
       "traits": ["Autêntico", "Único", "Incompreendido", "Coração grande", "Original"],
-      "funFact": "Assim como o peix bolha, você é prova de que a beleza está na autenticidade, não na aparência!"
+      "funFact": "Assim como o peixe bolha, você é prova de que a beleza está na autenticidade, não na aparência!"
     },
     "Pacu": {
       "name": "Pacu",

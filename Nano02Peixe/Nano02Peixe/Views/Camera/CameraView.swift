@@ -1,10 +1,3 @@
-//
-//  CameraView.swift
-//  FishQuiz
-//
-//  View que gerencia a câmera para captura da foto
-//
-
 import SwiftUI
 import AVFoundation
 

@@ -7,7 +7,6 @@ struct QuizProgressView: View {
     
     var body: some View {
         VStack(spacing: 12) {
-            // Texto do progresso
             HStack {
                 Text("Pergunta \(currentQuestion) de \(totalQuestions)")
                     .font(.subheadline)
@@ -22,14 +21,11 @@ struct QuizProgressView: View {
                     .foregroundColor(.secondary)
             }
             
-            // Barra de progresso custom
             ZStack(alignment: .leading) {
-                // Background da barra
                 RoundedRectangle(cornerRadius: 8)
                     .fill(Color(.systemGray5))
                     .frame(height: 8)
                 
-                // Progresso preenchido
                 RoundedRectangle(cornerRadius: 8)
                     .fill(
                         LinearGradient(
@@ -42,7 +38,6 @@ struct QuizProgressView: View {
                     .animation(.easeInOut(duration: 0.5), value: progress)
             }
             
-            // Mini indicador de peixes
             HStack(spacing: 4) {
                 ForEach(0..<totalQuestions, id: \.self) { index in
                     Circle()

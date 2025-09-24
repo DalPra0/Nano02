@@ -1,8 +1,3 @@
-//
-//  ContentView.swift
-//  FishQuiz
-//
-
 import SwiftUI
 
 struct ContentView: View {

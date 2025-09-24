@@ -1,10 +1,3 @@
-//
-//  FishCard.swift
-//  FishQuiz
-//
-//  Componente que exibe informações de um peixe
-//
-
 import SwiftUI
 
 struct FishCard: View {

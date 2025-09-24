@@ -8,7 +8,6 @@ struct AnswerButton: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 15) {
-                // Círculo de seleção
                 Circle()
                     .strokeBorder(isSelected ? .clear : .gray, lineWidth: 2)
                     .background(
@@ -25,7 +24,6 @@ struct AnswerButton: View {
                         }
                     }
                 
-                // Texto da resposta
                 Text(text)
                     .font(.body)
                     .multilineTextAlignment(.leading)
