@@ -3,7 +3,7 @@ import SwiftUI
 struct QuizStartView: View {
     @StateObject private var quizViewModel = QuizViewModel()
     @State private var showQuiz = false
-    
+        
     var body: some View {
         NavigationStack {
             VStack(spacing: 30) {
@@ -71,6 +71,6 @@ struct QuizStartView: View {
     }
 }
 
-#Preview {
-    QuizStartView()
-}
+//#Preview {
+//    QuizStartView()
+//}
