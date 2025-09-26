@@ -6,9 +6,10 @@ class ImageProcessingService {
     
     // MARK: - Resultado do processamento
     struct ProcessedImageResult {
-        let originalImage: UIImage
-        let processedImage: UIImage
-        let fishCharacteristics: [String]  // Lista do que foi aplicado
+        let originalImage: UIImage      // Foto original da câmera
+        let fishImage: UIImage          // Imagem do peixe usada
+        let processedImage: UIImage     // Resultado final (rosto + peixe)
+        let fishName: String
         let processingTime: TimeInterval
     }
     
@@ -25,24 +26,33 @@ class ImageProcessingService {
     ) {
         
         let startTime = Date()
-        print("🎨 ImageProcessingService: Aplicando filtro de \(fish.name)...")
+        print("🎨 ImageProcessingService: Criando composição \(fish.name) + rosto...")
         
         DispatchQueue.global(qos: .userInitiated).async {
             do {
-                // Aplicar características baseadas no tipo de peixe
-                let processedImage = try self.processImage(
-                    original: image,
-                    faceDetection: faceResult,
+                // 1. Carregar imagem do peixe
+                guard let fishImage = self.loadFishImage(for: fish) else {
+                    throw ImageProcessingError.fishImageNotFound(fish.name)
+                }
+                
+                // 2. Extrair rosto da foto
+                let extractedFace = try self.extractFace(from: image, using: faceResult)
+                
+                // 3. Compor rosto + peixe
+                let composedImage = try self.composeFaceWithFish(
+                    face: extractedFace,
+                    fishImage: fishImage,
                     fish: fish
                 )
                 
                 let processingTime = Date().timeIntervalSince(startTime)
-                print("✅ Filtro aplicado em \(String(format: "%.2f", processingTime))s")
+                print("✅ Composição criada em \(String(format: "%.2f", processingTime))s")
                 
                 let result = ProcessedImageResult(
                     originalImage: image,
-                    processedImage: processedImage,
-                    fishCharacteristics: self.getCharacteristicsForFish(fish),
+                    fishImage: fishImage,
+                    processedImage: composedImage,
+                    fishName: fish.name,
                     processingTime: processingTime
                 )
                 
@@ -51,7 +61,7 @@ class ImageProcessingService {
                 }
                 
             } catch {
-                print("❌ Erro ao processar imagem: \(error)")
+                print("❌ Erro ao processar composição: \(error)")
                 DispatchQueue.main.async {
                     completion(.failure(error))
                 }
@@ -59,401 +69,344 @@ class ImageProcessingService {
         }
     }
     
-    // MARK: - Processamento Principal da Imagem
-    private func processImage(
-        original: UIImage,
-        faceDetection: FaceDetectionService.FaceDetectionResult,
-        fish: Fish
+    // MARK: - 1. Carregar Imagem do Peixe
+    private func loadFishImage(for fish: Fish) -> UIImage? {
+        // Mapear nome do peixe para nome do arquivo CORRETO
+        let imageName = fishNameToImageName(fish.name)
+        
+        print("🖼️ Carregando imagem: \(imageName)")
+        
+        // Tentar carregar do bundle
+        if let image = UIImage(named: imageName) {
+            print("✅ Imagem carregada: \(imageName)")
+            return image
+        }
+        
+        // Fallback: tentar sem caracteres especiais
+        let fallbackName = imageName
+            .lowercased()
+            .replacingOccurrences(of: " ", with: "-")
+            .replacingOccurrences(of: "ç", with: "c")
+            .replacingOccurrences(of: "ã", with: "a")
+            .replacingOccurrences(of: "õ", with: "o")
+        
+        if let image = UIImage(named: fallbackName) {
+            print("✅ Imagem carregada (fallback): \(fallbackName)")
+            return image
+        }
+        
+        print("❌ Imagem não encontrada: \(imageName) ou \(fallbackName)")
+        return nil
+    }
+    
+    private func fishNameToImageName(_ fishName: String) -> String {
+        // Converter nome do peixe para nome do arquivo CORRETO
+        // ESSES SÃO OS NOMES QUE VOCÊ VAI ADICIONAR
+        switch fishName {
+        case "Peixe-mão liso":
+            return "peixe-mao-liso"
+        case "Peixe-espátula-chinês":
+            return "peixe-espatula-chines"
+        case "Peixe jacaré":
+            return "peixe-jacare"
+        case "Peixe dragão":
+            return "peixe-dragao"
+        case "Esturjão":
+            return "esturjao"
+        case "Peixe palhaço":
+            return "peixe-palhaco"
+        case "Peixe lua":
+            return "peixe-lua"
+        case "Piranha":
+            return "piranha"
+        case "Peixe pedra":
+            return "peixe-pedra"
+        case "Peixe-víbora de Sloane":
+            return "peixe-vibora-sloane"
+        case "Peixe-pescador":
+            return "peixe-pescador"
+        case "Pirarucu":
+            return "pirarucu"
+        case "Peixe bolha":
+            return "peixe-bolha"
+        case "Pacu":
+            return "pacu"
+        case "Bagre":
+            return "bagre"
+        case "Tilápia":
+            return "tilapia"
+        default:
+            return fishName.lowercased().replacingOccurrences(of: " ", with: "-")
+        }
+    }
+    
+    // MARK: - 2. Extrair Rosto da Foto
+    private func extractFace(
+        from image: UIImage,
+        using faceResult: FaceDetectionService.FaceDetectionResult
     ) throws -> UIImage {
         
-        guard let cgImage = original.cgImage else {
+        print("✂️ Extraindo rosto da foto...")
+        
+        guard let cgImage = image.cgImage else {
             throw ImageProcessingError.invalidImage
         }
         
         let imageSize = CGSize(width: cgImage.width, height: cgImage.height)
         
+        // Converter coordenadas normalizadas para pixels
+        let boundingBox = CGRect(
+            x: faceResult.boundingBox.minX * imageSize.width,
+            y: (1 - faceResult.boundingBox.maxY) * imageSize.height,  // Inverter Y
+            width: faceResult.boundingBox.width * imageSize.width,
+            height: faceResult.boundingBox.height * imageSize.height
+        )
+        
+        // Expandir um pouco a área para incluir mais contexto
+        let expandedBox = boundingBox.insetBy(dx: -boundingBox.width * 0.2, dy: -boundingBox.height * 0.2)
+        
+        // Garantir que não saia dos limites da imagem
+        let clampedBox = CGRect(
+            x: max(0, expandedBox.minX),
+            y: max(0, expandedBox.minY),
+            width: min(imageSize.width - max(0, expandedBox.minX), expandedBox.width),
+            height: min(imageSize.height - max(0, expandedBox.minY), expandedBox.height)
+        )
+        
+        print("📐 Bounding box: \(boundingBox)")
+        print("📐 Expanded box: \(expandedBox)")
+        print("📐 Clamped box: \(clampedBox)")
+        
+        // Recortar rosto
+        guard let croppedCGImage = cgImage.cropping(to: clampedBox) else {
+            throw ImageProcessingError.faceExtractionFailed
+        }
+        
+        let faceImage = UIImage(cgImage: croppedCGImage, scale: image.scale, orientation: image.imageOrientation)
+        
+        print("✅ Rosto extraído: \(faceImage.size)")
+        return faceImage
+    }
+    
+    // MARK: - 3. Compor Rosto + Peixe
+    private func composeFaceWithFish(
+        face: UIImage,
+        fishImage: UIImage,
+        fish: Fish
+    ) throws -> UIImage {
+        
+        print("🎭 Compondo rosto + \(fish.name)...")
+        
+        // Usar o tamanho da imagem do peixe como base
+        let canvasSize = fishImage.size
+        print("🖼️ Canvas size: \(canvasSize)")
+        
         // Criar contexto de desenho
-        UIGraphicsBeginImageContextWithOptions(imageSize, false, original.scale)
+        UIGraphicsBeginImageContextWithOptions(canvasSize, false, 0.0)
         defer { UIGraphicsEndImageContext() }
         
         guard let context = UIGraphicsGetCurrentContext() else {
             throw ImageProcessingError.contextCreationFailed
         }
         
-        // Desenhar imagem original
-        original.draw(at: .zero)
+        // 1. Desenhar peixe como fundo
+        fishImage.draw(at: .zero)
         
-        // Aplicar características específicas do peixe
-        try applyFishCharacteristics(
-            context: context,
-            imageSize: imageSize,
-            faceDetection: faceDetection,
-            fish: fish
-        )
+        // 2. Calcular posição e tamanho da cabeça do peixe
+        let headPosition = calculateFishHeadPosition(for: fish, canvasSize: canvasSize)
+        let headSize = calculateFishHeadSize(for: fish, canvasSize: canvasSize)
         
-        // Capturar resultado
-        guard let processedImage = UIGraphicsGetImageFromCurrentImageContext() else {
+        print("👤 Head position: \(headPosition)")
+        print("📏 Head size: \(headSize)")
+        
+        // 3. Redimensionar e desenhar o rosto
+        let faceRect = CGRect(origin: headPosition, size: headSize)
+        
+        // Aplicar máscara circular para o rosto (opcional)
+        if shouldApplyCircularMask(for: fish) {
+            context.saveGState()
+            
+            // Criar máscara circular
+            let maskPath = UIBezierPath(ovalIn: faceRect)
+            context.addPath(maskPath.cgPath)
+            context.clip()
+            
+            face.draw(in: faceRect)
+            
+            context.restoreGState()
+        } else {
+            // Desenhar rosto diretamente
+            face.draw(in: faceRect)
+        }
+        
+        // 4. Aplicar ajustes finais específicos do peixe
+        try applyFishSpecificAdjustments(context: context, fish: fish, faceRect: faceRect, canvasSize: canvasSize)
+        
+        // 5. Capturar resultado
+        guard let composedImage = UIGraphicsGetImageFromCurrentImageContext() else {
             throw ImageProcessingError.imageCreationFailed
         }
         
-        return processedImage
+        print("✅ Composição finalizada: \(composedImage.size)")
+        return composedImage
     }
     
-    // MARK: - Aplicar Características Específicas
-    private func applyFishCharacteristics(
-        context: CGContext,
-        imageSize: CGSize,
-        faceDetection: FaceDetectionService.FaceDetectionResult,
-        fish: Fish
-    ) throws {
+    // MARK: - Cálculos de Posicionamento
+    
+    private func calculateFishHeadPosition(for fish: Fish, canvasSize: CGSize) -> CGPoint {
+        // Posição da cabeça baseada no tipo de peixe
+        // Valores são percentuais da imagem (0.0 a 1.0)
         
-        print("🐟 Aplicando características de \(fish.name)...")
+        let (xPercent, yPercent) = fishHeadPositionPercent(for: fish)
         
-        // Converter coordenadas Vision para UIImage
-        let face = convertFaceCoordinates(faceDetection, imageSize: imageSize)
+        return CGPoint(
+            x: canvasSize.width * xPercent,
+            y: canvasSize.height * yPercent
+        )
+    }
+    
+    private func calculateFishHeadSize(for fish: Fish, canvasSize: CGSize) -> CGSize {
+        // Tamanho da cabeça baseado no tipo de peixe
+        // Valores são percentuais da imagem (0.0 a 1.0)
         
-        // Aplicar características baseadas no tipo de peixe
+        let (widthPercent, heightPercent) = fishHeadSizePercent(for: fish)
+        
+        return CGSize(
+            width: canvasSize.width * widthPercent,
+            height: canvasSize.height * heightPercent
+        )
+    }
+    
+    private func fishHeadPositionPercent(for fish: Fish) -> (x: Double, y: Double) {
+        // Retorna posição da cabeça como percentual da imagem
+        // (0,0) = top-left, (1,1) = bottom-right
+        
         switch fish.name {
         case "Peixe palhaço":
-            try applyClownfishCharacteristics(context: context, face: face, imageSize: imageSize)
-            
+            return (0.2, 0.15)  // Cabeça mais à esquerda, no topo
         case "Piranha":
-            try applyPiranhaCharacteristics(context: context, face: face, imageSize: imageSize)
-            
-        case "Peixe bolha":
-            try applyBlobfishCharacteristics(context: context, face: face, imageSize: imageSize)
-            
+            return (0.25, 0.2)  // Cabeça central-esquerda
         case "Peixe lua":
-            try applySunfishCharacteristics(context: context, face: face, imageSize: imageSize)
-            
-        case "Peixe-víbora de Sloane":
-            try applyViperCharacteristics(context: context, face: face, imageSize: imageSize)
-            
+            return (0.3, 0.1)   // Cabeça mais central, no topo
+        case "Pirarucu":
+            return (0.15, 0.25) // Cabeça à esquerda, mais para baixo
+        case "Peixe bolha":
+            return (0.3, 0.3)   // Centro, mais para baixo (corpo gelatinoso)
         default:
-            // Características genéricas para outros peixes
-            try applyGenericFishCharacteristics(context: context, face: face, imageSize: imageSize)
+            return (0.25, 0.2)  // Posição padrão
         }
     }
     
-    // MARK: - Características Específicas por Peixe
-    
-    private func applyClownfishCharacteristics(context: CGContext, face: ConvertedFaceCoordinates, imageSize: CGSize) throws {
-        print("🤡 Aplicando características de peixe palhaço...")
+    private func fishHeadSizePercent(for fish: Fish) -> (width: Double, height: Double) {
+        // Retorna tamanho da cabeça como percentual da imagem
         
-        // Listras laranja e branca
-        drawClownfishStripes(context: context, face: face)
-        
-        // Olhos grandes e expressivos
-        drawLargeEyes(context: context, leftEye: face.leftEye, rightEye: face.rightEye, color: .black)
-        
-        // Barbatanas pequenas nas laterais
-        drawSmallFins(context: context, face: face, color: UIColor.orange)
+        switch fish.name {
+        case "Peixe lua":
+            return (0.4, 0.4)   // Cabeça grande (peixe lua é redondo)
+        case "Peixe bolha":
+            return (0.45, 0.4)  // Cabeça maior (corpo gelatinoso)
+        case "Piranha":
+            return (0.3, 0.25)  // Cabeça média
+        case "Pirarucu":
+            return (0.35, 0.3)  // Cabeça grande (peixe grande)
+        case "Peixe palhaço":
+            return (0.25, 0.2)  // Cabeça pequena
+        default:
+            return (0.3, 0.25)  // Tamanho padrão
+        }
     }
     
-    private func applyPiranhaCharacteristics(context: CGContext, face: ConvertedFaceCoordinates, imageSize: CGSize) throws {
-        print("🦷 Aplicando características de piranha...")
-        
-        // Dentes afiados
-        drawSharpTeeth(context: context, mouth: face.outerLips)
-        
-        // Olhos pequenos e intensos
-        drawIntenseEyes(context: context, leftEye: face.leftEye, rightEye: face.rightEye)
-        
-        // Escamas cinzas
-        drawScales(context: context, face: face, color: UIColor.darkGray.withAlphaComponent(0.3))
+    private func shouldApplyCircularMask(for fish: Fish) -> Bool {
+        // Alguns peixes ficam melhor com máscara circular
+        switch fish.name {
+        case "Peixe lua", "Peixe bolha":
+            return true
+        default:
+            return false
+        }
     }
     
-    private func applyBlobfishCharacteristics(context: CGContext, face: ConvertedFaceCoordinates, imageSize: CGSize) throws {
-        print("😅 Aplicando características de peixe bolha...")
+    // MARK: - Ajustes Específicos por Peixe
+    
+    private func applyFishSpecificAdjustments(
+        context: CGContext,
+        fish: Fish,
+        faceRect: CGRect,
+        canvasSize: CGSize
+    ) throws {
         
-        // Efeito gelatinoso/derretido
-        drawBlobEffect(context: context, face: face)
+        print("🎨 Aplicando ajustes para \(fish.name)...")
         
-        // Olhos caídos
-        drawDroopyEyes(context: context, leftEye: face.leftEye, rightEye: face.rightEye)
-        
-        // Boca caída
-        drawSadMouth(context: context, mouth: face.outerLips)
+        switch fish.name {
+        case "Peixe palhaço":
+            // Adicionar pequenas listras laranja ao redor do rosto
+            drawClownfishStripes(context: context, faceRect: faceRect)
+            
+        case "Piranha":
+            // Adicionar dentes pequenos ao redor da boca (se detectada)
+            drawPiranhaTeeth(context: context, faceRect: faceRect)
+            
+        case "Peixe bolha":
+            // Adicionar efeito gelatinoso/transparente
+            drawBlobEffect(context: context, faceRect: faceRect)
+            
+        case "Peixe lua":
+            // Adicionar brilho prateado
+            drawSunfishGlow(context: context, faceRect: faceRect)
+            
+        default:
+            // Ajustes genéricos ou nenhum ajuste especial
+            break
+        }
     }
     
-    private func applySunfishCharacteristics(context: CGContext, face: ConvertedFaceCoordinates, imageSize: CGSize) throws {
-        print("🌞 Aplicando características de peixe lua...")
-        
-        // Formato circular exagerado
-        drawCircularFaceOutline(context: context, face: face)
-        
-        // Olhos pequenos relativos ao tamanho
-        drawTinyEyes(context: context, leftEye: face.leftEye, rightEye: face.rightEye)
-        
-        // Textura prateada
-        drawMetallicTexture(context: context, face: face, color: UIColor.lightGray.withAlphaComponent(0.4))
-    }
+    // MARK: - Efeitos Específicos (Simplificados)
     
-    private func applyViperCharacteristics(context: CGContext, face: ConvertedFaceCoordinates, imageSize: CGSize) throws {
-        print("🐍 Aplicando características de peixe-víbora...")
+    private func drawClownfishStripes(context: CGContext, faceRect: CGRect) {
+        context.setFillColor(UIColor.orange.withAlphaComponent(0.3).cgColor)
         
-        // Dentes longos tipo vampiro
-        drawVampireTeeth(context: context, mouth: face.outerLips)
-        
-        // Olhos luminosos/brilhantes
-        drawGlowingEyes(context: context, leftEye: face.leftEye, rightEye: face.rightEye)
-        
-        // Textura escura/misteriosa
-        drawDarkTexture(context: context, face: face)
-    }
-    
-    private func applyGenericFishCharacteristics(context: CGContext, face: ConvertedFaceCoordinates, imageSize: CGSize) throws {
-        print("🐟 Aplicando características genéricas de peixe...")
-        
-        // Escamas básicas
-        drawScales(context: context, face: face, color: UIColor.blue.withAlphaComponent(0.2))
-        
-        // Olhos de peixe
-        drawFishEyes(context: context, leftEye: face.leftEye, rightEye: face.rightEye)
-        
-        // Barbatanas laterais
-        drawBasicFins(context: context, face: face)
-    }
-    
-    // MARK: - Funções de Desenho Básicas
-    
-    private func drawClownfishStripes(context: CGContext, face: ConvertedFaceCoordinates) {
-        context.setFillColor(UIColor.orange.withAlphaComponent(0.6).cgColor)
-        
-        // Desenhar listras horizontais
-        let stripeHeight = face.boundingBox.height / 6
+        // Desenhar algumas listras finas
+        let stripeHeight: CGFloat = 3
         for i in 0..<3 {
-            let y = face.boundingBox.minY + CGFloat(i * 2) * stripeHeight
-            let rect = CGRect(
-                x: face.boundingBox.minX,
-                y: y,
-                width: face.boundingBox.width,
-                height: stripeHeight
-            )
+            let y = faceRect.minY + CGFloat(i) * faceRect.height / 3
+            let rect = CGRect(x: faceRect.minX, y: y, width: faceRect.width, height: stripeHeight)
             context.fill(rect)
         }
     }
     
-    private func drawLargeEyes(context: CGContext, leftEye: [CGPoint], rightEye: [CGPoint], color: UIColor) {
-        context.setFillColor(color.cgColor)
+    private func drawPiranhaTeeth(context: CGContext, faceRect: CGRect) {
+        context.setFillColor(UIColor.white.withAlphaComponent(0.8).cgColor)
         
-        // Desenhar círculos maiores sobre os olhos
-        if let leftCenter = centerPoint(of: leftEye) {
-            let radius = 15.0
-            context.fillEllipse(in: CGRect(
-                x: leftCenter.x - radius,
-                y: leftCenter.y - radius,
-                width: radius * 2,
-                height: radius * 2
-            ))
-        }
+        // Desenhar pequenos triângulos como dentes
+        let teethCount = 4
+        let toothWidth = faceRect.width / CGFloat(teethCount * 2)
         
-        if let rightCenter = centerPoint(of: rightEye) {
-            let radius = 15.0
-            context.fillEllipse(in: CGRect(
-                x: rightCenter.x - radius,
-                y: rightCenter.y - radius,
-                width: radius * 2,
-                height: radius * 2
-            ))
+        for i in 0..<teethCount {
+            let x = faceRect.minX + CGFloat(i) * toothWidth * 2
+            let y = faceRect.maxY - 10
+            
+            let triangle = UIBezierPath()
+            triangle.move(to: CGPoint(x: x, y: y))
+            triangle.addLine(to: CGPoint(x: x + toothWidth/2, y: y - 5))
+            triangle.addLine(to: CGPoint(x: x + toothWidth, y: y))
+            triangle.close()
+            
+            context.addPath(triangle.cgPath)
+            context.fillPath()
         }
     }
     
-    private func drawSharpTeeth(context: CGContext, mouth: [CGPoint]) {
-        guard mouth.count >= 3 else { return }
-        
-        context.setFillColor(UIColor.white.cgColor)
-        context.setStrokeColor(UIColor.black.cgColor)
-        context.setLineWidth(1.0)
-        
-        // Desenhar triângulos como dentes
-        let teethCount = 5
-        let mouthWidth = mouth.max { $0.x < $1.x }!.x - mouth.min { $0.x < $1.x }!.x
-        let toothWidth = mouthWidth / CGFloat(teethCount)
-        
-        if let mouthCenter = centerPoint(of: mouth) {
-            for i in 0..<teethCount {
-                let x = mouthCenter.x - mouthWidth/2 + CGFloat(i) * toothWidth
-                let points = [
-                    CGPoint(x: x, y: mouthCenter.y),
-                    CGPoint(x: x + toothWidth/2, y: mouthCenter.y - 10),
-                    CGPoint(x: x + toothWidth, y: mouthCenter.y)
-                ]
-                
-                context.move(to: points[0])
-                context.addLine(to: points[1])
-                context.addLine(to: points[2])
-                context.closePath()
-                context.drawPath(using: .fillStroke)
-            }
-        }
+    private func drawBlobEffect(context: CGContext, faceRect: CGRect) {
+        // Adicionar overlay semi-transparente para efeito gelatinoso
+        context.setFillColor(UIColor.blue.withAlphaComponent(0.1).cgColor)
+        context.fillEllipse(in: faceRect)
     }
     
-    private func drawScales(context: CGContext, face: ConvertedFaceCoordinates, color: UIColor) {
-        context.setFillColor(color.cgColor)
-        
-        // Desenhar padrão de escamas como círculos sobrepostos
-        let scaleSize: CGFloat = 8
-        let spacing: CGFloat = 6
-        
-        let rows = Int(face.boundingBox.height / spacing)
-        let cols = Int(face.boundingBox.width / spacing)
-        
-        for row in 0..<rows {
-            for col in 0..<cols {
-                let x = face.boundingBox.minX + CGFloat(col) * spacing
-                let y = face.boundingBox.minY + CGFloat(row) * spacing
-                
-                // Verificar se está dentro do contorno do rosto
-                if pointIsInFace(CGPoint(x: x, y: y), faceContour: face.faceContour) {
-                    context.fillEllipse(in: CGRect(
-                        x: x - scaleSize/2,
-                        y: y - scaleSize/2,
-                        width: scaleSize,
-                        height: scaleSize
-                    ))
-                }
-            }
-        }
+    private func drawSunfishGlow(context: CGContext, faceRect: CGRect) {
+        // Adicionar brilho prateado
+        context.setFillColor(UIColor.white.withAlphaComponent(0.2).cgColor)
+        context.fillEllipse(in: faceRect.insetBy(dx: -5, dy: -5))
     }
-    
-    // MARK: - Funções Auxiliares
-    
-    private func convertFaceCoordinates(_ face: FaceDetectionService.FaceDetectionResult, imageSize: CGSize) -> ConvertedFaceCoordinates {
-        
-        // Converter bounding box
-        let boundingBox = CGRect(
-            x: face.boundingBox.minX * imageSize.width,
-            y: (1 - face.boundingBox.maxY) * imageSize.height,  // Inverter Y
-            width: face.boundingBox.width * imageSize.width,
-            height: face.boundingBox.height * imageSize.height
-        )
-        
-        // Converter pontos
-        func convertPoints(_ points: [CGPoint]) -> [CGPoint] {
-            return points.map { point in
-                CGPoint(
-                    x: point.x * imageSize.width,
-                    y: (1 - point.y) * imageSize.height
-                )
-            }
-        }
-        
-        return ConvertedFaceCoordinates(
-            boundingBox: boundingBox,
-            leftEye: convertPoints(face.leftEye),
-            rightEye: convertPoints(face.rightEye),
-            nose: convertPoints(face.nose),
-            outerLips: convertPoints(face.outerLips),
-            faceContour: convertPoints(face.faceContour)
-        )
-    }
-    
-    private func centerPoint(of points: [CGPoint]) -> CGPoint? {
-        guard !points.isEmpty else { return nil }
-        
-        let sumX = points.reduce(0) { $0 + $1.x }
-        let sumY = points.reduce(0) { $0 + $1.y }
-        
-        return CGPoint(
-            x: sumX / CGFloat(points.count),
-            y: sumY / CGFloat(points.count)
-        )
-    }
-    
-    private func pointIsInFace(_ point: CGPoint, faceContour: [CGPoint]) -> Bool {
-        // Implementação simples: verificar se está dentro do bounding box
-        // Em uma versão mais sofisticada, usaríamos o contorno real
-        guard let minX = faceContour.min(by: { $0.x < $1.x })?.x,
-              let maxX = faceContour.max(by: { $0.x < $1.x })?.x,
-              let minY = faceContour.min(by: { $0.y < $1.y })?.y,
-              let maxY = faceContour.max(by: { $0.y < $1.y })?.y else {
-            return false
-        }
-        
-        return point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY
-    }
-    
-    private func getCharacteristicsForFish(_ fish: Fish) -> [String] {
-        switch fish.name {
-        case "Peixe palhaço":
-            return ["Listras laranja", "Olhos grandes", "Barbatanas pequenas"]
-        case "Piranha":
-            return ["Dentes afiados", "Olhos intensos", "Escamas escuras"]
-        case "Peixe bolha":
-            return ["Efeito gelatinoso", "Olhos caídos", "Expressão melancólica"]
-        case "Peixe lua":
-            return ["Formato circular", "Olhos pequenos", "Textura prateada"]
-        case "Peixe-víbora de Sloane":
-            return ["Dentes vampiro", "Olhos brilhantes", "Textura misteriosa"]
-        default:
-            return ["Escamas", "Olhos de peixe", "Barbatanas"]
-        }
-    }
-    
-    // Adicionar implementações placeholder para as outras funções de desenho
-    private func drawSmallFins(context: CGContext, face: ConvertedFaceCoordinates, color: UIColor) {
-        // TODO: Implementar barbatanas pequenas
-    }
-    
-    private func drawIntenseEyes(context: CGContext, leftEye: [CGPoint], rightEye: [CGPoint]) {
-        // TODO: Implementar olhos intensos
-    }
-    
-    private func drawBlobEffect(context: CGContext, face: ConvertedFaceCoordinates) {
-        // TODO: Implementar efeito gelatinoso
-    }
-    
-    private func drawDroopyEyes(context: CGContext, leftEye: [CGPoint], rightEye: [CGPoint]) {
-        // TODO: Implementar olhos caídos
-    }
-    
-    private func drawSadMouth(context: CGContext, mouth: [CGPoint]) {
-        // TODO: Implementar boca triste
-    }
-    
-    private func drawCircularFaceOutline(context: CGContext, face: ConvertedFaceCoordinates) {
-        // TODO: Implementar contorno circular
-    }
-    
-    private func drawTinyEyes(context: CGContext, leftEye: [CGPoint], rightEye: [CGPoint]) {
-        // TODO: Implementar olhos pequenos
-    }
-    
-    private func drawMetallicTexture(context: CGContext, face: ConvertedFaceCoordinates, color: UIColor) {
-        // TODO: Implementar textura metálica
-    }
-    
-    private func drawVampireTeeth(context: CGContext, mouth: [CGPoint]) {
-        // TODO: Implementar dentes vampiro
-    }
-    
-    private func drawGlowingEyes(context: CGContext, leftEye: [CGPoint], rightEye: [CGPoint]) {
-        // TODO: Implementar olhos brilhantes
-    }
-    
-    private func drawDarkTexture(context: CGContext, face: ConvertedFaceCoordinates) {
-        // TODO: Implementar textura escura
-    }
-    
-    private func drawFishEyes(context: CGContext, leftEye: [CGPoint], rightEye: [CGPoint]) {
-        // TODO: Implementar olhos de peixe genéricos
-    }
-    
-    private func drawBasicFins(context: CGContext, face: ConvertedFaceCoordinates) {
-        // TODO: Implementar barbatanas básicas
-    }
-}
-
-// MARK: - Estruturas Auxiliares
-
-private struct ConvertedFaceCoordinates {
-    let boundingBox: CGRect
-    let leftEye: [CGPoint]
-    let rightEye: [CGPoint]
-    let nose: [CGPoint]
-    let outerLips: [CGPoint]
-    let faceContour: [CGPoint]
 }
 
 // MARK: - Erros
@@ -461,6 +414,8 @@ enum ImageProcessingError: LocalizedError {
     case invalidImage
     case contextCreationFailed
     case imageCreationFailed
+    case fishImageNotFound(String)
+    case faceExtractionFailed
     
     var errorDescription: String? {
         switch self {
@@ -470,6 +425,10 @@ enum ImageProcessingError: LocalizedError {
             return "Erro interno: não foi possível criar contexto de desenho"
         case .imageCreationFailed:
             return "Erro ao gerar imagem processada"
+        case .fishImageNotFound(let fishName):
+            return "Imagem do peixe '\(fishName)' não encontrada. Adicione a imagem na pasta Resources/Images/Fish/"
+        case .faceExtractionFailed:
+            return "Não foi possível extrair o rosto da foto"
         }
     }
 }

@@ -9,6 +9,7 @@ struct FishFilterView: View {
     @State private var processedResult: ImageProcessingService.ProcessedImageResult?
     @State private var errorMessage: String?
     @State private var showShareSheet = false
+    @State private var processingStep = "Preparando..."
     
     var body: some View {
         ZStack {
@@ -52,7 +53,7 @@ struct FishFilterView: View {
             }
             
             VStack(spacing: 15) {
-                Text("Aplicando Filtro")
+                Text("Criando Filtro")
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
@@ -62,9 +63,10 @@ struct FishFilterView: View {
                     .foregroundColor(.white.opacity(0.8))
                     .multilineTextAlignment(.center)
                 
-                Text("Detectando características faciais...")
+                Text(processingStep)
                     .font(.caption)
                     .foregroundColor(.white.opacity(0.6))
+                    .animation(.easeInOut, value: processingStep)
             }
             .padding(.horizontal)
         }
@@ -96,10 +98,10 @@ struct FishFilterView: View {
                 Spacer()
                 
                 VStack {
-                    Text("Filtro Aplicado!")
+                    Text("Filtro Criado!")
                         .font(.headline)
                         .foregroundColor(.white)
-                    Text(quizResult.fish.name)
+                    Text(result.fishName)
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.8))
                 }
@@ -120,42 +122,91 @@ struct FishFilterView: View {
                 )
             )
             
-            // Imagem processada
+            // Comparação: Antes e Depois
             ScrollView {
                 VStack(spacing: 20) {
-                    // Imagem principal
-                    Image(uiImage: result.processedImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .cornerRadius(20)
-                        .shadow(radius: 10)
-                        .padding()
-                    
-                    // Informações do processamento
+                    // Resultado final (maior)
                     VStack(spacing: 15) {
-                        Text("✨ Características Aplicadas:")
+                        Text("🎉 Resultado Final")
                             .font(.headline)
                             .foregroundColor(.white)
                         
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 10) {
-                            ForEach(result.fishCharacteristics, id: \.self) { characteristic in
-                                Text(characteristic)
-                                    .font(.caption)
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(Color.blue.opacity(0.3))
-                                    .cornerRadius(15)
-                            }
+                        Image(uiImage: result.processedImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .cornerRadius(20)
+                            .shadow(radius: 10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(.ultraThinMaterial)
+                                    .shadow(radius: 15)
+                            )
+                    }
+                    .padding()
+                    
+                    // Comparação lado a lado (menores)
+                    HStack(spacing: 15) {
+                        // Foto original
+                        VStack(spacing: 8) {
+                            Text("📸 Sua Foto")
+                                .font(.caption)
+                                .foregroundColor(.white.opacity(0.8))
+                            
+                            Image(uiImage: result.originalImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 120, height: 120)
+                                .clipShape(RoundedRectangle(cornerRadius: 15))
                         }
                         
-                        // Info técnica
-                        Text("Processado em \(String(format: "%.2f", result.processingTime))s")
-                            .font(.caption2)
+                        Text("+")
+                            .font(.title)
                             .foregroundColor(.white.opacity(0.6))
+                        
+                        // Imagem do peixe
+                        VStack(spacing: 8) {
+                            Text("🐟 \(result.fishName)")
+                                .font(.caption)
+                                .foregroundColor(.white.opacity(0.8))
+                                .multilineTextAlignment(.center)
+                            
+                            Image(uiImage: result.fishImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 120, height: 120)
+                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                        }
                     }
                     .padding()
                     .background(Color.white.opacity(0.1))
+                    .cornerRadius(20)
+                    .padding(.horizontal)
+                    
+                    // Info do processamento
+                    VStack(spacing: 15) {
+                        HStack {
+                            Image(systemName: "clock")
+                                .foregroundColor(.green)
+                            Text("Processado em \(String(format: "%.2f", result.processingTime))s")
+                                .font(.caption)
+                                .foregroundColor(.white.opacity(0.8))
+                            
+                            Spacer()
+                            
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                            Text("Sucesso")
+                                .font(.caption)
+                                .foregroundColor(.white.opacity(0.8))
+                        }
+                        
+                        Text("Seu rosto foi aplicado sobre o corpo do \(result.fishName)!")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.6))
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding()
+                    .background(Color.green.opacity(0.2))
                     .cornerRadius(15)
                     .padding(.horizontal)
                 }
@@ -233,6 +284,24 @@ struct FishFilterView: View {
                     .padding(.horizontal)
             }
             
+            // Dicas de troubleshooting
+            VStack(alignment: .leading, spacing: 8) {
+                Text("💡 Dicas:")
+                    .font(.headline)
+                    .foregroundColor(.yellow)
+                
+                Text("• Certifique-se que há boa iluminação")
+                Text("• Posicione o rosto de frente para a câmera")
+                Text("• Verifique se as imagens dos peixes estão no projeto")
+                
+            }
+            .font(.caption)
+            .foregroundColor(.white.opacity(0.7))
+            .padding()
+            .background(Color.yellow.opacity(0.1))
+            .cornerRadius(10)
+            .padding(.horizontal)
+            
             VStack(spacing: 15) {
                 Button("Tentar Novamente") {
                     startProcessing()
@@ -262,8 +331,13 @@ struct FishFilterView: View {
         isProcessing = true
         errorMessage = nil
         processedResult = nil
+        processingStep = "Preparando análise..."
         
         print("🚀 FishFilterView: Iniciando processamento de filtro...")
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.processingStep = "Detectando rosto na foto..."
+        }
         
         // Passo 1: Detectar rosto
         FaceDetectionService.shared.detectFace(in: capturedImage) { result in
@@ -271,11 +345,27 @@ struct FishFilterView: View {
             case .success(let faceResult):
                 print("✅ Rosto detectado, aplicando filtro...")
                 
+                DispatchQueue.main.async {
+                    self.processingStep = "Verificando qualidade da detecção..."
+                }
+                
                 // Verificar qualidade da detecção
                 guard FaceDetectionService.shared.isDetectionQualityGood(faceResult) else {
                     self.isProcessing = false
                     self.errorMessage = "Qualidade da detecção muito baixa. Tente uma foto com melhor iluminação e posicionamento frontal."
                     return
+                }
+                
+                DispatchQueue.main.async {
+                    self.processingStep = "Carregando imagem do \(self.quizResult.fish.name)..."
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.processingStep = "Extraindo seu rosto..."
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    self.processingStep = "Criando composição final..."
                 }
                 
                 // Passo 2: Aplicar filtro

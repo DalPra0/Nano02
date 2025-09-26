@@ -10,9 +10,22 @@
 		15DBCE602E81DFCD000DFE14 /* Nano02Peixe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nano02Peixe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		1508BB262E873304009CAA50 /* Exceptions for "Nano02Peixe" folder in "Nano02Peixe" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 15DBCE5F2E81DFCD000DFE14 /* Nano02Peixe */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		15DBCE622E81DFCD000DFE14 /* Nano02Peixe */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				1508BB262E873304009CAA50 /* Exceptions for "Nano02Peixe" folder in "Nano02Peixe" target */,
+			);
 			path = Nano02Peixe;
 			sourceTree = "<group>";
 		};
@@ -256,6 +269,8 @@
 				DEVELOPMENT_TEAM = 982D3NRR89;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Nano02Peixe/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Este app usa a câmera para criar filtros de peixe divertidos baseados no seu resultado do quiz!";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -289,6 +304,8 @@
 				DEVELOPMENT_TEAM = 982D3NRR89;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Nano02Peixe/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Este app usa a câmera para criar filtros de peixe divertidos baseados no seu resultado do quiz!";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
