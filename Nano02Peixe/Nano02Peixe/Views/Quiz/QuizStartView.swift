@@ -4,13 +4,14 @@ struct QuizStartView: View {
     @StateObject private var quizViewModel = QuizViewModel()
     @State private var showQuiz = false
     
-    // Estados para animações
     @State private var peixeDouradoOffset: CGFloat = 0
     @State private var tubaraoOffset: CGFloat = 0
     @State private var carangueijoOffset: CGFloat = 0
     @State private var estrelaRotation: Double = 0
     @State private var exclamacaoScale: Double = 1.0
     @State private var tituloFloat: CGFloat = 0
+    @State private var wallpaperClaroOffset: CGFloat = 0
+    @State private var wallpaperEscuroOffset: CGFloat = 0
     
     var body: some View {
         NavigationStack {
@@ -20,7 +21,13 @@ struct QuizStartView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: geometry.size.width * 1.1, height: geometry.size.height * 1.1)
-                        .clipped()
+                        .ignoresSafeArea()
+                    
+                    Image("wallpaperAzulClaro")
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: geometry.size.width * 1.1, height: geometry.size.height * 1.1)
+                        .offset(x: wallpaperClaroOffset, y: wallpaperClaroOffset * 0.5)
                         .ignoresSafeArea()
 
                     
@@ -34,13 +41,14 @@ struct QuizStartView: View {
                                 width: geometry.size.width * 1.1,
                                 height: geometry.size.height * 0.5
                             )
-                            .clipped()
+                            .ignoresSafeArea()
+
                     }
                     .offset(y: 0)
+                    .offset(x: wallpaperEscuroOffset * 0.7, y: wallpaperEscuroOffset * 0.3)
                     
                     let scaleX = geometry.size.width / 393
                     let scaleY = geometry.size.height / 852
-                    
                     
                     Image("tituloPeixe")
                         .resizable()
@@ -55,7 +63,7 @@ struct QuizStartView: View {
                     Image("peixeDourado")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                            .frame(width: 170 * scaleX, height: 170 * scaleY)
+                        .frame(width: 170 * scaleX, height: 170 * scaleY)
                         .position(
                             x: 300 * scaleX,
                             y: 330 * scaleY
@@ -96,7 +104,6 @@ struct QuizStartView: View {
                         )
                         .offset(x: carangueijoOffset * 0.3)
                     
-                    // Estrela - à esquerda do caranguejo
                     Image("assetEstrela")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -107,7 +114,6 @@ struct QuizStartView: View {
                         )
                         .rotationEffect(.degrees(estrelaRotation))
                     
-                    // Raios amarelos - à direita do caranguejo, em cima dele
                     Image("assetExclamacao")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -131,6 +137,13 @@ struct QuizStartView: View {
     }
     
     private func startUnderwaterAnimations() {
+        withAnimation(.easeInOut(duration: 8.0).repeatForever(autoreverses: true)) {
+            wallpaperClaroOffset = 8
+        }
+        
+        withAnimation(.easeInOut(duration: 6.0).repeatForever(autoreverses: true)) {
+            wallpaperEscuroOffset = 12
+        }
         
         withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
             peixeDouradoOffset = 12
@@ -150,6 +163,10 @@ struct QuizStartView: View {
         
         withAnimation(.easeInOut(duration: 3.5).repeatForever(autoreverses: true)) {
             exclamacaoScale = 1.05
+        }
+        
+        withAnimation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true)) {
+            tituloFloat = 3
         }
     }
 }
