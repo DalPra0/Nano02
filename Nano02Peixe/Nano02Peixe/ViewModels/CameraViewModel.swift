@@ -4,13 +4,11 @@ import AVFoundation
 import UIKit
 
 class CameraViewModel: NSObject, ObservableObject {
-    // MARK: - Published Properties (Estado reativo)
     @Published var isAuthorized = false
     @Published var authorizationMessage = ""
     @Published var capturedImage: UIImage?
     @Published var isCapturing = false
     
-    // MARK: - Camera Properties
     private let session = AVCaptureSession()
     private let photoOutput = AVCapturePhotoOutput()
     
@@ -20,7 +18,6 @@ class CameraViewModel: NSObject, ObservableObject {
         checkAuthorization()
     }
     
-    // MARK: - Authorization
     func checkAuthorization() {
         print("🔐 CameraViewModel: Verificando permissões de câmera...")
         
@@ -63,7 +60,6 @@ class CameraViewModel: NSObject, ObservableObject {
         }
     }
     
-    // MARK: - Session Management
     func startSession() {
         guard isAuthorized else {
             print("❌ CameraViewModel: Tentando iniciar sessão sem permissão")
@@ -72,7 +68,6 @@ class CameraViewModel: NSObject, ObservableObject {
         
         print("🎥 CameraViewModel: Configurando sessão da câmera...")
         
-        // Configurar em background thread
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             self?.configureSession()
         }
@@ -83,13 +78,11 @@ class CameraViewModel: NSObject, ObservableObject {
         
         session.beginConfiguration()
         
-        // Configurar qualidade
         if session.canSetSessionPreset(.photo) {
             session.sessionPreset = .photo
             print("📷 Session preset: .photo")
         }
         
-        // Adicionar input da câmera
         guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front),
               let input = try? AVCaptureDeviceInput(device: camera) else {
             print("❌ Erro: Não foi possível acessar câmera frontal")
@@ -102,7 +95,6 @@ class CameraViewModel: NSObject, ObservableObject {
             print("✅ Input da câmera frontal adicionado")
         }
         
-        // Adicionar output para fotos
         if session.canAddOutput(photoOutput) {
             session.addOutput(photoOutput)
             print("✅ Photo output adicionado")
@@ -110,7 +102,6 @@ class CameraViewModel: NSObject, ObservableObject {
         
         session.commitConfiguration()
         
-        // Iniciar sessão
         DispatchQueue.main.async {
             self.session.startRunning()
             print("🎬 Sessão da câmera iniciada!")
@@ -122,7 +113,6 @@ class CameraViewModel: NSObject, ObservableObject {
         session.stopRunning()
     }
     
-    // MARK: - Photo Capture
     func capturePhoto() {
         guard !isCapturing else {
             print("⚠️ Já capturando foto, ignorando...")
@@ -136,7 +126,6 @@ class CameraViewModel: NSObject, ObservableObject {
         photoOutput.capturePhoto(with: settings, delegate: self)
     }
     
-    // MARK: - Public Properties
     var previewLayer: AVCaptureVideoPreviewLayer {
         let layer = AVCaptureVideoPreviewLayer(session: session)
         layer.videoGravity = .resizeAspectFill
@@ -144,7 +133,6 @@ class CameraViewModel: NSObject, ObservableObject {
     }
 }
 
-// MARK: - AVCapturePhotoCaptureDelegate
 extension CameraViewModel: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         

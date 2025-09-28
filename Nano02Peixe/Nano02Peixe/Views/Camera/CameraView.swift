@@ -5,22 +5,17 @@ struct CameraView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
     @Environment(\.dismiss) private var dismiss
     
-    // Recebe o resultado do quiz para aplicar o filtro
     let quizResult: QuizResult
     
     var body: some View {
         ZStack {
-            // Background preto para câmera
             Color.black.ignoresSafeArea()
             
             if cameraViewModel.isAuthorized {
-                // Preview da câmera
                 CameraPreviewView(previewLayer: cameraViewModel.previewLayer)
                     .ignoresSafeArea()
                 
-                // Overlay com controles
                 VStack {
-                    // Header com título e botão fechar
                     HStack {
                         Button("Voltar") {
                             dismiss()
@@ -41,7 +36,6 @@ struct CameraView: View {
                         
                         Spacer()
                         
-                        // Espaço para balancear o layout
                         Color.clear
                             .frame(width: 60, height: 44)
                     }
@@ -55,9 +49,7 @@ struct CameraView: View {
                     
                     Spacer()
                     
-                    // Área de captura na parte inferior
                     VStack(spacing: 20) {
-                        // Instruções
                         VStack {
                             Text("Posicione seu rosto na câmera")
                                 .font(.subheadline)
@@ -69,7 +61,6 @@ struct CameraView: View {
                         .padding(.horizontal)
                         .multilineTextAlignment(.center)
                         
-                        // Botão de captura
                         Button {
                             cameraViewModel.capturePhoto()
                         } label: {
@@ -103,7 +94,6 @@ struct CameraView: View {
                 }
                 
             } else {
-                // Estado sem permissão
                 VStack(spacing: 30) {
                     Image(systemName: "camera.fill")
                         .font(.system(size: 60))
@@ -123,7 +113,6 @@ struct CameraView: View {
                     }
                     
                     Button("Configurações") {
-                        // Abrir configurações do app
                         if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
                             UIApplication.shared.open(settingsUrl)
                         }
@@ -146,7 +135,6 @@ struct CameraView: View {
             print("📱 CameraView: Saiu da tela")
             cameraViewModel.stopSession()
         }
-        // Navegar para resultado quando foto for capturada
         .fullScreenCover(item: Binding<IdentifiableImage?>(
             get: { 
                 if let image = cameraViewModel.capturedImage {
@@ -158,7 +146,6 @@ struct CameraView: View {
                 cameraViewModel.capturedImage = nil
             }
         )) { identifiableImage in
-            // Aqui vamos implementar a view de aplicação do filtro
             FishFilterView(
                 capturedImage: identifiableImage.image,
                 quizResult: quizResult
@@ -168,14 +155,12 @@ struct CameraView: View {
     }
 }
 
-// MARK: - Camera Preview (UIKit bridge)
 struct CameraPreviewView: UIViewRepresentable {
     let previewLayer: AVCaptureVideoPreviewLayer
     
     func makeUIView(context: Context) -> UIView {
         let view = UIView()
         
-        // Configurar layer
         previewLayer.frame = view.bounds
         previewLayer.videoGravity = .resizeAspectFill
         view.layer.addSublayer(previewLayer)
@@ -184,22 +169,18 @@ struct CameraPreviewView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: UIView, context: Context) {
-        // Atualizar bounds quando view mudar de tamanho
         DispatchQueue.main.async {
             self.previewLayer.frame = uiView.bounds
         }
     }
 }
 
-// MARK: - Helper para binding da imagem
 struct IdentifiableImage: Identifiable {
     let id = UUID()
     let image: UIImage
 }
 
-// MARK: - Preview
 #Preview {
-    // Preview com resultado mockado
     let mockResult = QuizResult(
         fish: Fish(
             name: "Peixe palhaço",

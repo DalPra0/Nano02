@@ -36,11 +36,9 @@ struct FishFilterView: View {
         .preferredColorScheme(.dark)
     }
     
-    // MARK: - Views
     
     private var processingView: some View {
         VStack(spacing: 30) {
-            // Animação de processamento
             VStack(spacing: 20) {
                 Text("🐟")
                     .font(.system(size: 60))
@@ -87,7 +85,6 @@ struct FishFilterView: View {
     
     private func resultView(_ result: ImageProcessingService.ProcessedImageResult) -> some View {
         VStack(spacing: 0) {
-            // Header
             HStack {
                 Button("Fechar") {
                     dismiss()
@@ -122,10 +119,8 @@ struct FishFilterView: View {
                 )
             )
             
-            // Comparação: Antes e Depois
             ScrollView {
                 VStack(spacing: 20) {
-                    // Resultado final (maior)
                     VStack(spacing: 15) {
                         Text("🎉 Resultado Final")
                             .font(.headline)
@@ -144,9 +139,7 @@ struct FishFilterView: View {
                     }
                     .padding()
                     
-                    // Comparação lado a lado (menores)
                     HStack(spacing: 15) {
-                        // Foto original
                         VStack(spacing: 8) {
                             Text("📸 Sua Foto")
                                 .font(.caption)
@@ -163,7 +156,6 @@ struct FishFilterView: View {
                             .font(.title)
                             .foregroundColor(.white.opacity(0.6))
                         
-                        // Imagem do peixe
                         VStack(spacing: 8) {
                             Text("🐟 \(result.fishName)")
                                 .font(.caption)
@@ -182,7 +174,6 @@ struct FishFilterView: View {
                     .cornerRadius(20)
                     .padding(.horizontal)
                     
-                    // Info do processamento
                     VStack(spacing: 15) {
                         HStack {
                             Image(systemName: "clock")
@@ -212,9 +203,7 @@ struct FishFilterView: View {
                 }
             }
             
-            // Botões de ação
             VStack(spacing: 15) {
-                // Compartilhar (principal)
                 Button {
                     showShareSheet = true
                 } label: {
@@ -239,7 +228,6 @@ struct FishFilterView: View {
                     .shadow(radius: 5)
                 }
                 
-                // Tentar novamente
                 Button {
                     resetAndRetry()
                 } label: {
@@ -284,7 +272,6 @@ struct FishFilterView: View {
                     .padding(.horizontal)
             }
             
-            // Dicas de troubleshooting
             VStack(alignment: .leading, spacing: 8) {
                 Text("💡 Dicas:")
                     .font(.headline)
@@ -325,7 +312,6 @@ struct FishFilterView: View {
         }
     }
     
-    // MARK: - Actions
     
     private func startProcessing() {
         isProcessing = true
@@ -339,7 +325,6 @@ struct FishFilterView: View {
             self.processingStep = "Detectando rosto na foto..."
         }
         
-        // Passo 1: Detectar rosto
         FaceDetectionService.shared.detectFace(in: capturedImage) { result in
             switch result {
             case .success(let faceResult):
@@ -349,7 +334,6 @@ struct FishFilterView: View {
                     self.processingStep = "Verificando qualidade da detecção..."
                 }
                 
-                // Verificar qualidade da detecção
                 guard FaceDetectionService.shared.isDetectionQualityGood(faceResult) else {
                     self.isProcessing = false
                     self.errorMessage = "Qualidade da detecção muito baixa. Tente uma foto com melhor iluminação e posicionamento frontal."
@@ -368,7 +352,6 @@ struct FishFilterView: View {
                     self.processingStep = "Criando composição final..."
                 }
                 
-                // Passo 2: Aplicar filtro
                 ImageProcessingService.shared.applyFishFilter(
                     to: self.capturedImage,
                     using: faceResult,
@@ -397,11 +380,9 @@ struct FishFilterView: View {
     
     private func resetAndRetry() {
         dismiss()
-        // Volta para câmera - será implementado na navegação
     }
 }
 
-// MARK: - Share Sheet
 struct ShareSheet: UIViewControllerRepresentable {
     let items: [Any]
     
@@ -413,7 +394,6 @@ struct ShareSheet: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
-// MARK: - Preview
 #Preview {
     let mockResult = QuizResult(
         fish: Fish(
@@ -427,7 +407,6 @@ struct ShareSheet: UIViewControllerRepresentable {
         answers: ["A", "B", "C"]
     )
     
-    // Criar uma imagem mock para preview
     let mockImage = UIImage(systemName: "person.crop.circle.fill") ?? UIImage()
     
     FishFilterView(capturedImage: mockImage, quizResult: mockResult)

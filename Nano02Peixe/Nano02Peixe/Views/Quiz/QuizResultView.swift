@@ -9,7 +9,6 @@ struct QuizResultView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 30) {
-                // Header com confete
                 VStack(spacing: 15) {
                     Text("🎉")
                         .font(.system(size: 60))
@@ -25,15 +24,12 @@ struct QuizResultView: View {
                 .padding(.top, 20)
                 
                 if let result = quizViewModel.quizResult {
-                    // Card do peixe
                     VStack(spacing: 20) {
-                        // Emoji/Imagem do peixe (grande)
                         Text("🐟")
                             .font(.system(size: 100))
                             .scaleEffect(animateResult ? 1.0 : 0.5)
                             .animation(.spring(response: 0.6, dampingFraction: 0.7).delay(0.6), value: animateResult)
                         
-                        // Título da personalidade
                         VStack(spacing: 8) {
                             Text("Você é:")
                                 .font(.title2)
@@ -62,7 +58,6 @@ struct QuizResultView: View {
                     )
                     .padding(.horizontal)
                     
-                    // Descrição
                     Text(result.fish.description)
                         .font(.body)
                         .multilineTextAlignment(.center)
@@ -70,7 +65,6 @@ struct QuizResultView: View {
                         .opacity(animateResult ? 1.0 : 0.0)
                         .animation(.easeInOut.delay(1.0), value: animateResult)
                     
-                    // Características (traits)
                     VStack(alignment: .leading, spacing: 15) {
                         Text("🌟 Suas Características:")
                             .font(.headline)
@@ -101,7 +95,6 @@ struct QuizResultView: View {
                     )
                     .padding(.horizontal)
                     
-                    // Fun Fact
                     VStack(alignment: .leading, spacing: 10) {
                         Text("🤓 Curiosidade:")
                             .font(.headline)
@@ -124,7 +117,6 @@ struct QuizResultView: View {
                     .opacity(animateResult ? 1.0 : 0.0)
                     .animation(.easeInOut.delay(1.6), value: animateResult)
                     
-                    // Score info
                     HStack {
                         Text("Pontuação: \(result.totalScore) pontos")
                             .font(.caption)
@@ -141,9 +133,7 @@ struct QuizResultView: View {
                     .animation(.easeInOut.delay(1.8), value: animateResult)
                 }
                 
-                // Botões de ação
                 VStack(spacing: 15) {
-                    // Botão câmera - AGORA FUNCIONANDO!
                     Button {
                         showCamera = true
                     } label: {
@@ -171,7 +161,6 @@ struct QuizResultView: View {
                     .opacity(animateResult ? 1.0 : 0.0)
                     .animation(.easeInOut.delay(2.0), value: animateResult)
                     
-                    // Botão refazer
                     Button {
                         quizViewModel.restartQuiz()
                         dismiss()
@@ -202,7 +191,6 @@ struct QuizResultView: View {
         .onAppear {
             animateResult = true
         }
-        // ✅ AGORA INTEGRADO COM CAMERA VIEW!
         .fullScreenCover(isPresented: $showCamera) {
             if let result = quizViewModel.quizResult {
                 CameraView(quizResult: result)
@@ -213,7 +201,6 @@ struct QuizResultView: View {
 
 #Preview {
     let viewModel = QuizViewModel()
-    // Simulando um resultado
     if let fishPersonality = QuestionsDataLoader.shared.fishPersonalities["Peixe palhaço"] {
         let fish = Fish(
             name: fishPersonality.name,
