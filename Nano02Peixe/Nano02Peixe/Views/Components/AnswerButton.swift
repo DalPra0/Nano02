@@ -7,55 +7,51 @@ struct AnswerButton: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 15) {
-                Circle()
-                    .strokeBorder(isSelected ? .clear : .gray, lineWidth: 2)
-                    .background(
-                        Circle()
-                            .fill(isSelected ? .blue : .clear)
+            ZStack {
+                // Usa o asset fundoOpcoesRespostas como background
+                Image("fundoOpcoesRespostas")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(height: 65)
+                    .opacity(isSelected ? 1.0 : 0.85)
+                    .overlay(
+                        // Overlay azul quando selecionado
+                        isSelected ? Color.blue.opacity(0.25) : Color.clear
                     )
-                    .frame(width: 20, height: 20)
-                    .overlay {
-                        if isSelected {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.white)
-                                .font(.caption)
-                                .fontWeight(.bold)
-                        }
-                    }
                 
-                Text(text)
-                    .font(.body)
-                    .multilineTextAlignment(.leading)
-                    .foregroundColor(isSelected ? .white : .primary)
-                
-                Spacer()
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(
-                        isSelected ? 
-                        LinearGradient(
-                            gradient: Gradient(colors: [.blue, .teal]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ) :
-                        LinearGradient(
-                            gradient: Gradient(colors: [Color(.systemGray6)]),
-                            startPoint: .leading,
-                            endPoint: .trailing
+                HStack(spacing: 12) {
+                    Circle()
+                        .strokeBorder(isSelected ? .white : .white.opacity(0.6), lineWidth: 2)
+                        .background(
+                            Circle()
+                                .fill(isSelected ? .white : .clear)
                         )
-                    )
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? .clear : Color(.systemGray4), lineWidth: 1)
-            )
+                        .frame(width: 20, height: 20)
+                        .overlay {
+                            if isSelected {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(.blue)
+                                    .font(.caption)
+                                    .fontWeight(.bold)
+                            }
+                        }
+                    
+                    Text(text)
+                        .font(.system(size: 15, weight: isSelected ? .semibold : .regular))
+                        .multilineTextAlignment(.leading)
+                        .foregroundColor(.white)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.9)
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 12))
             .shadow(
-                color: isSelected ? .blue.opacity(0.3) : .clear,
-                radius: isSelected ? 8 : 0
+                color: isSelected ? .blue.opacity(0.3) : .black.opacity(0.15),
+                radius: isSelected ? 6 : 3,
+                y: 2
             )
             .scaleEffect(isSelected ? 1.02 : 1.0)
         }
@@ -71,5 +67,5 @@ struct AnswerButton: View {
         AnswerButton(text: "Resposta normal", isSelected: false) {}
     }
     .padding()
-    .preferredColorScheme(.dark)
+    .background(Color.blue.opacity(0.3))
 }
